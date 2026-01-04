@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>MILOCOSTUDIO | Administración</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Montserrat&display=swap" rel="stylesheet">
+
+<style>
+body{
+  margin:0;
+  background:#1f1f1f;
+  color:#f5f5f5;
+  font-family:Montserrat;
+}
+h1{
+  text-align:center;
+  margin:40px 0;
+  font-family:'Playfair Display';
+}
+.panel{
+  max-width:900px;
+  margin:auto;
+  background:#2c2c2c;
+  padding:30px;
+  border-radius:16px;
+}
+input{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  background:#1f1f1f;
+  border:1px solid #444;
+  color:white;
+  border-radius:8px;
+}
+button{
+  padding:12px 20px;
+  margin-top:15px;
+  background:#c2a45d;
+  color:#1f1f1f;
+  border:none;
+  cursor:pointer;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:25px;
+  margin-top:40px;
+}
+.card{
+  background:#1f1f1f;
+  border-radius:14px;
+  overflow:hidden;
+  border:1px solid #444;
+}
+.card img{
+  width:100%;
+  height:220px;
+  object-fit:cover;
+}
+.info{
+  padding:15px;
+}
+.price{
+  color:#c2a45d;
+  margin-top:8px;
+}
+.actions button{
+  background:#444;
+  color:white;
+  margin-right:10px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Administración · Servicios</h1>
+
+<div class="panel">
+  <input id="nombre" placeholder="Nombre del servicio">
+  <input id="descripcion" placeholder="Descripción">
+  <input id="precio" placeholder="Precio (ej: $1500)">
+  <input id="imagen" placeholder="URL de la imagen">
+
+  <button onclick="guardarServicio()">Guardar servicio</button>
+
+  <div class="grid" id="gridAdmin"></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, get, push, update, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const app = initializeApp({
+  apiKey: "AIzaSyCb47oi5HqrgrqIc1jwukF-igINVSOm5Pk",
+  authDomain: "milocostudio-a1528.firebaseapp.com",
+  databaseURL: "https://milocostudio-a1528-default-rtdb.firebaseio.com",
+  projectId: "milocostudio-a1528",
+  storageBucket: "milocostudio-a1528.firebasestorage.app",
+  messagingSenderId: "578653241182",
+  appId: "1:578653241182:web:dd263f3c6781de8a9ed9cf"
+});
+
+const db = getDatabase(app);
+let editandoId = null;
+
+async function cargarServicios(){
+  const snap = await get(ref(db,'servicios'));
+  gridAdmin.innerHTML = "";
+  if(!snap.exists()) return;
+
+  Object.entries(snap.val()).forEach(([id,s])=>{
+    const card = document.createElement("div");
+    card.className="card";
+    card.innerHTML=`
+      <img src="${s.imagen}">
+      <div class="info">
+        <h3>${s.nombre}</h3>
+        <p>${s.descripcion}</p>
+        <div class="price">Precio: ${s.precio}</div>
+        <div class="actions">
+          <button onclick="editarServicio('${id}')">Editar</button>
+          <button onclick="eliminarServicio('${id}')">Eliminar</button>
+        </div>
+      </div>
+    `;
+    gridAdmin.appendChild(card);
+  });
+}
+
+window.guardarServicio = async()=>{
+  const data = {
+    nombre: nombre.value,
+    descripcion: descripcion.value,
+    precio: precio.value,
+    imagen: imagen.value
+  };
+
+  if(editandoId){
+    await update(ref(db,'servicios/'+editandoId), data);
+    editandoId = null;
+  }else{
+    await push(ref(db,'servicios'), data);
+  }
+
+  nombre.value = descripcion.value = precio.value = imagen.value = "";
+  cargarServicios();
+};
+
+window.editarServicio = async(id)=>{
+  const snap = await get(ref(db,'servicios/'+id));
+  if(!snap.exists()) return;
+
+  const s = snap.val();
+  nombre.value = s.nombre;
+  descripcion.value = s.descripcion;
+  precio.value = s.precio;
+  imagen.value = s.imagen;
+  editandoId = id;
+};
+
+window.eliminarServicio = async(id)=>{
+  if(confirm("¿Eliminar este servicio?")){
+    await remove(ref(db,'servicios/'+id));
+    cargarServicios();
+  }
+};
+
+cargarServicios();
+</script>
+
+</body>
+</html>
