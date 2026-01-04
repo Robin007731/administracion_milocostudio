@@ -25,17 +25,32 @@
         .panel.active { display: block; animation: fadeIn 0.4s; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Estilo de Turnos y Servicios */
-        .reserva-item { background: var(--card); border-radius: 10px; padding: 20px; margin-bottom: 15px; border-left: 4px solid #fff; display: flex; justify-content: space-between; align-items: center; }
-        .btn-wa { background: var(--green); color: white; text-decoration: none; padding: 8px 12px; border-radius: 6px; display: inline-block; margin-top: 10px; font-size: 0.75rem; font-weight: 600; }
-        .btn-del { background: rgba(255,107,107,0.1); color: var(--red); border: 1px solid var(--red); padding: 10px 15px; border-radius: 6px; cursor: pointer; font-size: 0.7rem; font-weight: bold; }
+        /* Tarjeta de Reserva con toda la info */
+        .reserva-item { 
+            background: var(--card); border-radius: 12px; padding: 20px; margin-bottom: 15px; 
+            border-left: 5px solid var(--green); display: flex; flex-direction: column; gap: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .reserva-header { display: flex; justify-content: space-between; align-items: flex-start; }
+        .reserva-info b { font-size: 1.2rem; color: var(--gold); }
+        .reserva-info p { margin: 5px 0; font-size: 0.9rem; opacity: 0.9; }
+        
+        .btn-wa { 
+            background: var(--green); color: white; text-decoration: none; 
+            padding: 12px; border-radius: 8px; text-align: center;
+            font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 8px;
+            transition: 0.3s;
+        }
+        .btn-wa:hover { filter: brightness(1.1); }
+        
+        .btn-del { background: rgba(255,107,107,0.1); color: var(--red); border: 1px solid var(--red); padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 0.7rem; font-weight: bold; }
         
         input, select { width: 100%; padding: 12px; margin: 8px 0 15px; background: var(--input-bg); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 8px; box-sizing: border-box; }
         .btn-save { background: #fff; color: #3d3d3d; width: 100%; padding: 15px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* Notificaciones */
+        /* Toast y Modales */
         #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; }
-        .toast { background: #fff; color: #333; padding: 15px 25px; border-radius: 8px; margin-top: 10px; font-weight: 600; box-shadow: 0 5px 15px rgba(0,0,0,0.3); animation: slideIn 0.3s ease forwards; }
+        .toast { background: #fff; color: #333; padding: 15px 25px; border-radius: 8px; margin-top: 10px; font-weight: 600; box-shadow: 0 5px 15px rgba(0,0,0,0.3); animation: slideIn 0.3s ease; }
         @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
         #custom-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--overlay); display: none; justify-content: center; align-items: center; z-index: 10000; backdrop-filter: blur(5px); }
@@ -55,20 +70,20 @@
 <div class="container">
     <div class="tabs">
         <div class="tab active" id="tabBtnAgenda">AGENDA</div>
-        <div class="tab" id="tabBtnServicios">SERVICIOS</div>
+        <div class="tab" id="tabBtnServicios">CATÁLOGO</div>
     </div>
 
     <div id="panelAgenda" class="panel active">
         <div style="background: var(--card); padding: 20px; border-radius: 12px; margin-bottom: 20px;">
             <input type="date" id="filtroFecha">
-            <button class="btn-save" id="btnFiltrar">VER DÍA</button>
+            <button class="btn-save" id="btnFiltrar">BUSCAR TURNOS</button>
         </div>
         <div id="listaReservas"></div>
     </div>
 
     <div id="panelServicios" class="panel">
         <div style="background: var(--card); padding: 25px; border-radius: 12px;">
-            <h3 style="margin-top:0">GESTIONAR CATÁLOGO</h3>
+            <h3 style="margin-top:0">AÑADIR SERVICIO</h3>
             <input id="sNombre" placeholder="Nombre (ej: Corte + Barba)">
             <input id="sPrecio" type="number" placeholder="Precio ($)">
             <select id="sCategoria">
@@ -76,7 +91,7 @@
                 <option value="Barba y Detalles">Barba y Detalles</option>
                 <option value="Colores">Colores</option>
             </select>
-            <button class="btn-save" id="btnGuardarServicio">AÑADIR AL CATÁLOGO</button>
+            <button class="btn-save" id="btnGuardarServicio">GUARDAR EN CATÁLOGO</button>
         </div>
         <div id="listaServiciosAdmin" style="margin-top:20px"></div>
     </div>
@@ -85,11 +100,11 @@
 <div id="toast-container"></div>
 <div id="custom-modal">
     <div class="modal-content">
-        <h3 id="modal-title">¿Estás seguro?</h3>
+        <h3 id="modal-title"></h3>
         <p id="modal-text"></p>
         <div class="modal-btns">
             <button class="btn-modal btn-cancel" id="modal-cancel">CANCELAR</button>
-            <button class="btn-modal btn-confirm" id="modal-confirm">ELIMINAR</button>
+            <button class="btn-modal btn-confirm" id="modal-confirm">SÍ, ELIMINAR</button>
         </div>
     </div>
 </div>
@@ -108,80 +123,87 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // --- NOTIFICACIONES ---
-    function showToast(message) {
-        const container = document.getElementById('toast-container');
-        const toast = document.createElement('div'); toast.className = 'toast';
-        toast.innerText = message; container.appendChild(toast);
-        setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
+    function showToast(msj) {
+        const c = document.getElementById('toast-container');
+        const t = document.createElement('div'); t.className = 'toast'; t.innerText = msj;
+        c.appendChild(t);
+        setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 3000);
     }
 
-    // --- MODAL DE CONFIRMACIÓN ---
-    let actionCallback = null;
-    function openConfirm(title, text, callback) {
+    let actionCB = null;
+    function confirm(title, text, cb) {
         document.getElementById('modal-title').innerText = title;
         document.getElementById('modal-text').innerText = text;
         document.getElementById('custom-modal').style.display = 'flex';
-        actionCallback = callback;
+        actionCB = cb;
     }
     document.getElementById('modal-cancel').onclick = () => document.getElementById('custom-modal').style.display = 'none';
-    document.getElementById('modal-confirm').onclick = () => { if(actionCallback) actionCallback(); document.getElementById('custom-modal').style.display = 'none'; };
+    document.getElementById('modal-confirm').onclick = () => { if(actionCB) actionCB(); document.getElementById('custom-modal').style.display = 'none'; };
 
     // --- LÓGICA DE AGENDA ---
     async function cargarAgenda() {
         const fecha = document.getElementById('filtroFecha').value;
         const contenedor = document.getElementById('listaReservas');
-        contenedor.innerHTML = "<p style='text-align:center'>Cargando agenda...</p>";
+        contenedor.innerHTML = "<p style='text-align:center'>Buscando...</p>";
         
         const snap = await get(query(ref(db, 'reservas'), orderByChild('fecha'), equalTo(fecha)));
         contenedor.innerHTML = "";
         
-        if (!snap.exists()) { contenedor.innerHTML = "<p style='text-align:center; opacity:0.5'>Sin turnos para este día.</p>"; return; }
+        if (!snap.exists()) { contenedor.innerHTML = "<p style='text-align:center; opacity:0.5'>No hay reservas para este día.</p>"; return; }
         
         Object.entries(snap.val()).sort((a,b) => a[1].hora.localeCompare(b[1].hora)).forEach(([id, r]) => {
             const div = document.createElement('div'); div.className = 'reserva-item';
+            
+            // Limpiar el número de teléfono por si el usuario puso espacios o signos
+            const telLimpio = r.tel.replace(/\D/g, '');
+            
             div.innerHTML = `
-                <div>
-                    <b>${r.hora} - ${r.nombre}</b><br>
-                    <small>${r.servicio}</small><br>
-                    <a href="https://wa.me/${r.tel}" class="btn-wa" target="_blank">WhatsApp</a>
+                <div class="reserva-header">
+                    <div class="reserva-info">
+                        <b>${r.hora}hs - ${r.nombre}</b>
+                        <p>📍 <b>Servicio:</b> ${r.servicio}</p>
+                        <p>📱 <b>Tel:</b> ${r.tel}</p>
+                    </div>
+                    <button class="btn-del" data-id="${id}">X</button>
                 </div>
-                <button class="btn-del" data-id="${id}">BORRAR</button>
+                <a href="https://wa.me/${telLimpio}" class="btn-wa" target="_blank">
+                    MENSAJE DE WHATSAPP
+                </a>
             `;
             contenedor.appendChild(div);
         });
 
         contenedor.querySelectorAll('.btn-del').forEach(btn => {
-            btn.onclick = () => openConfirm("Eliminar Turno", "¿Deseas borrar esta reserva?", async () => {
+            btn.onclick = () => confirm("Eliminar Turno", "¿Deseas borrar esta cita de la agenda?", async () => {
                 await remove(ref(db, `reservas/${btn.dataset.id}`));
-                showToast("Turno eliminado");
+                showToast("Turno borrado");
                 cargarAgenda();
             });
         });
     }
 
-    // --- GESTIÓN DE SERVICIOS (CATÁLOGO) ---
+    // --- GESTIÓN DE SERVICIOS ---
     function cargarServiciosAdmin() {
         const container = document.getElementById('listaServiciosAdmin');
         onValue(ref(db, 'catalogo'), (snap) => {
-            container.innerHTML = "<h3>CATÁLOGO ACTUAL</h3>";
-            if (!snap.exists()) { container.innerHTML += "<p>No hay servicios creados.</p>"; return; }
-            
+            container.innerHTML = "<h3>SERVICIOS EN CATÁLOGO</h3>";
+            if (!snap.exists()) return;
             Object.entries(snap.val()).forEach(([id, s]) => {
                 const div = document.createElement('div'); div.className = 'reserva-item';
-                div.style.borderLeftColor = "#25d366";
+                div.style.borderLeftColor = "white";
                 div.innerHTML = `
-                    <div>
-                        <b>${s.nombre}</b><br>
-                        <small>${s.categoria} | $${s.precio}</small>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <b>${s.nombre}</b><br>
+                            <small>${s.categoria} | $${s.precio}</small>
+                        </div>
+                        <button class="btn-del" data-id="${id}">QUITAR</button>
                     </div>
-                    <button class="btn-del" data-id="${id}">QUITAR</button>
                 `;
                 container.appendChild(div);
             });
-
             container.querySelectorAll('.btn-del').forEach(btn => {
-                btn.onclick = () => openConfirm("Eliminar Servicio", "¿Quitar del catálogo visible para clientes?", async () => {
+                btn.onclick = () => confirm("Quitar del Catálogo", "¿Deseas eliminar este servicio?", async () => {
                     await remove(ref(db, `catalogo/${btn.dataset.id}`));
                     showToast("Servicio eliminado");
                 });
@@ -190,12 +212,10 @@
     }
 
     document.getElementById('btnGuardarServicio').onclick = async () => {
-        const n = document.getElementById('sNombre').value;
-        const p = document.getElementById('sPrecio').value;
-        const c = document.getElementById('sCategoria').value;
+        const n = document.getElementById('sNombre').value, p = document.getElementById('sPrecio').value, c = document.getElementById('sCategoria').value;
         if(n && p) {
             await push(ref(db, 'catalogo'), { nombre: n, precio: p, categoria: c });
-            showToast("Guardado con éxito");
+            showToast("Servicio guardado");
             document.getElementById('sNombre').value = ""; document.getElementById('sPrecio').value = "";
         }
     };
@@ -203,7 +223,6 @@
     // Navegación
     document.getElementById('tabBtnAgenda').onclick = () => { switchTab('tabBtnAgenda', 'panelAgenda'); cargarAgenda(); };
     document.getElementById('tabBtnServicios').onclick = () => { switchTab('tabBtnServicios', 'panelServicios'); cargarServiciosAdmin(); };
-    
     function switchTab(t, p) {
         document.querySelectorAll('.tab, .panel').forEach(el => el.classList.remove('active'));
         document.getElementById(t).classList.add('active'); document.getElementById(p).classList.add('active');
