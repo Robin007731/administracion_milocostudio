@@ -3,16 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MILOCOSTUDIO | Panel Control</title>
+    <title>MILOCOSTUDIO | Administración</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root { 
             --gold: #ffffff; --bg: #3d3d3d; --card: #4a4a4a; --input-bg: #2b2b2b;
-            --red: #ff6b6b; --green: #25d366; --overlay: rgba(0,0,0,0.8);
+            --red: #ff4d4d; --green: #25d366; --overlay: rgba(0,0,0,0.8);
         }
         body { margin: 0; background: var(--bg); color: #ffffff; font-family: 'Montserrat', sans-serif; padding-bottom: 50px; }
         header { background: rgba(0,0,0,0.3); padding: 30px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
         header h1 { font-family: 'Playfair Display'; color: var(--gold); margin: 0; font-size: 1.8rem; letter-spacing: 4px; text-transform: uppercase; }
+        
         .container { max-width: 800px; margin: 30px auto; padding: 0 20px; }
         
         /* TABS */
@@ -31,25 +32,26 @@
         @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
         .item-header { display: flex; justify-content: space-between; align-items: flex-start; }
-        .item-info b { font-size: 1.1rem; color: var(--gold); display: block; margin-bottom: 5px; }
-        .item-info p { margin: 3px 0; font-size: 0.9rem; opacity: 0.9; line-height: 1.4; }
+        .item-info b { font-size: 1.2rem; color: var(--gold); display: block; margin-bottom: 5px; }
+        .item-info p { margin: 4px 0; font-size: 0.95rem; opacity: 0.9; line-height: 1.4; }
         
         .btn-wa { 
             background: var(--green); color: white; text-decoration: none; 
             padding: 14px; border-radius: 8px; text-align: center;
-            font-weight: 700; font-size: 0.85rem; letter-spacing: 1px; display: block;
+            font-weight: 700; font-size: 0.9rem; letter-spacing: 1px; display: block;
+            transition: 0.3s;
         }
-        .btn-del { background: rgba(255,107,107,0.1); color: var(--red); border: 1px solid var(--red); padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 0.65rem; font-weight: bold; }
+        .btn-wa:hover { filter: brightness(1.1); }
+        .btn-del { background: rgba(255,77,77,0.1); color: var(--red); border: 1px solid var(--red); padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 0.7rem; font-weight: bold; }
         
         /* FORMULARIOS */
         .form-box { background: var(--card); padding: 25px; border-radius: 15px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.05); }
-        input, select { width: 100%; padding: 14px; margin: 8px 0 15px; background: var(--input-bg); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 8px; box-sizing: border-box; }
+        input, select { width: 100%; padding: 14px; margin: 8px 0 15px; background: var(--input-bg); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 8px; box-sizing: border-box; font-family: 'Montserrat'; }
         .btn-primary { background: #fff; color: #3d3d3d; width: 100%; padding: 16px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* MODAL Y TOAST */
+        /* MODAL */
         #custom-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--overlay); display: none; justify-content: center; align-items: center; z-index: 10000; backdrop-filter: blur(5px); }
         .modal-content { background: var(--card); padding: 30px; border-radius: 15px; max-width: 400px; width: 90%; text-align: center; }
-        #toast { position: fixed; bottom: 20px; right: 20px; background: #fff; color: #333; padding: 15px 25px; border-radius: 8px; font-weight: 600; display: none; z-index: 10001; }
     </style>
 </head>
 <body>
@@ -66,38 +68,36 @@
 
     <div id="panelAgenda" class="panel active">
         <div class="form-box">
-            <h3 style="margin-top:0; font-size: 0.9rem; letter-spacing: 1px; opacity: 0.7;">SELECCIONAR DÍA</h3>
+            <h3 style="margin:0 0 15px 0; font-size: 1rem;">VER AGENDA POR DÍA</h3>
             <input type="date" id="filtroFecha" onchange="cargarAgenda()">
-            <p id="contadorTurnos" style="font-size: 0.8rem; margin: 0; color: var(--green); font-weight: 600;"></p>
+            <div id="contador" style="font-size: 0.8rem; color: var(--green); font-weight: bold; margin-top: 5px;"></div>
         </div>
         <div id="listaReservas"></div>
     </div>
 
     <div id="panelCatalogo" class="panel">
         <div class="form-box">
-            <h3 style="margin-top:0; font-size: 0.9rem; letter-spacing: 1px; opacity: 0.7;">AÑADIR NUEVO SERVICIO</h3>
-            <input id="sNombre" placeholder="Nombre del servicio">
+            <h3 style="margin-top:0; font-size: 1rem;">AÑADIR SERVICIO</h3>
+            <input id="sNombre" placeholder="Nombre">
             <input id="sPrecio" type="number" placeholder="Precio ($)">
             <select id="sCategoria">
                 <option value="Cortes">Cortes</option>
                 <option value="Barba y Detalles">Barba y Detalles</option>
                 <option value="Colores">Colores</option>
             </select>
-            <button class="btn-primary" id="btnGuardarServicio">AÑADIR AL CATÁLOGO</button>
+            <button class="btn-primary" id="btnGuardarServicio">GUARDAR EN CATÁLOGO</button>
         </div>
         <div id="listaServiciosAdmin"></div>
     </div>
 </div>
 
-<div id="toast"></div>
-
 <div id="custom-modal">
     <div class="modal-content">
-        <h3 id="mTitle">¿Eliminar?</h3>
-        <p id="mText" style="opacity: 0.7; font-size: 0.9rem;"></p>
+        <h3 id="mTitle">¿Eliminar Turno?</h3>
+        <p style="opacity: 0.7; font-size: 0.9rem;">Al eliminarlo, el horario quedará libre para otros clientes.</p>
         <div style="display:flex; gap:10px; margin-top:20px;">
-            <button class="btn-primary" style="background:#666; color:white;" onclick="cerrarModal()">CANCELAR</button>
-            <button class="btn-primary" style="background:var(--red); color:white;" id="btnConfirmarModal">BORRAR</button>
+            <button class="btn-primary" style="background:#666; color:white;" onclick="cerrarModal()">NO, VOLVER</button>
+            <button class="btn-primary" style="background:var(--red); color:white;" id="btnConfirmarEliminar">SÍ, BORRAR</button>
         </div>
     </div>
 </div>
@@ -116,21 +116,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    function showToast(txt) {
-        const t = document.getElementById('toast');
-        t.innerText = txt; t.style.display = 'block';
-        setTimeout(() => { t.style.display = 'none'; }, 3000);
-    }
-
-    let callbackModal = null;
-    window.abrirModal = (titulo, texto, cb) => {
-        document.getElementById('mTitle').innerText = titulo;
-        document.getElementById('mText').innerText = texto;
-        document.getElementById('custom-modal').style.display = 'flex';
-        callbackModal = cb;
-    };
-    window.cerrarModal = () => document.getElementById('custom-modal').style.display = 'none';
-    document.getElementById('btnConfirmarModal').onclick = () => { if(callbackModal) callbackModal(); cerrarModal(); };
+    let unsubAgenda = null;
 
     // --- NAVEGACIÓN ---
     window.switchTab = (target) => {
@@ -146,63 +132,65 @@
         }
     };
 
-    // --- AGENDA CON ESCUCHA EN TIEMPO REAL ---
-    let unsubscribeAgenda = null;
-
+    // --- CARGAR AGENDA ---
     window.cargarAgenda = () => {
         const fecha = document.getElementById('filtroFecha').value;
         const cont = document.getElementById('listaReservas');
-        const contTxt = document.getElementById('contadorTurnos');
+        const contTxt = document.getElementById('contador');
+
+        if(unsubAgenda) unsubAgenda(); // Limpiar escucha previa
+
+        const q = query(ref(db, 'reservas'), orderByChild('fecha'), equalTo(fecha));
         
-        // Limpiamos la escucha anterior si existe
-        if (unsubscribeAgenda) unsubscribeAgenda();
-
-        const agendaRef = query(ref(db, 'reservas'), orderByChild('fecha'), equalTo(fecha));
-
-        unsubscribeAgenda = onValue(agendaRef, (snap) => {
+        unsubAgenda = onValue(q, (snap) => {
             cont.innerHTML = "";
             if(!snap.exists()) {
-                cont.innerHTML = "<p style='text-align:center; opacity:0.5;'>No hay turnos registrados para hoy.</p>";
+                cont.innerHTML = "<p style='text-align:center; opacity:0.5;'>No hay turnos para este día.</p>";
                 contTxt.innerText = "0 TURNOS";
                 return;
             }
 
             const turnos = Object.entries(snap.val()).sort((a,b) => a[1].hora.localeCompare(b[1].hora));
-            contTxt.innerText = `${turnos.length} TURNOS ENCONTRADOS`;
+            contTxt.innerText = `${turnos.length} TURNOS REGISTRADOS`;
 
             turnos.forEach(([id, r]) => {
+                const telLimpio = r.tel.replace(/\D/g, '');
                 const div = document.createElement('div');
                 div.className = 'item-card';
-                const telLimpio = r.tel.replace(/\D/g, '');
-                
                 div.innerHTML = `
                     <div class="item-header">
                         <div class="item-info">
                             <b>${r.hora}hs - ${r.nombre}</b>
                             <p>✂️ <b>Servicio:</b> ${r.servicio}</p>
-                            <p>📞 <b>Tel:</b> ${r.tel}</p>
+                            <p>📞 <b>WhatsApp:</b> ${r.tel}</p>
                         </div>
-                        <button class="btn-del" onclick="borrarTurno('${id}')">Borrar</button>
+                        <button class="btn-del" onclick="confirmarBorrar('${id}')">Borrar</button>
                     </div>
-                    <a href="https://wa.me/${telLimpio}" class="btn-wa" target="_blank">ENVIAR WHATSAPP</a>
+                    <a href="https://wa.me/${telLimpio}" class="btn-wa" target="_blank">MENSAJE DE WHATSAPP</a>
                 `;
                 cont.appendChild(div);
             });
         });
     };
 
-    window.borrarTurno = (id) => {
-        abrirModal("¿Borrar turno?", "Esta acción liberará el horario en la App de clientes.", async () => {
-            await remove(ref(db, `reservas/${id}`));
-            showToast("Turno eliminado");
-        });
+    // --- BORRAR TURNO ---
+    let idParaBorrar = "";
+    window.confirmarBorrar = (id) => {
+        idParaBorrar = id;
+        document.getElementById('custom-modal').style.display = 'flex';
+    };
+    window.cerrarModal = () => document.getElementById('custom-modal').style.display = 'none';
+    
+    document.getElementById('btnConfirmarEliminar').onclick = async () => {
+        await remove(ref(db, `reservas/${idParaBorrar}`));
+        cerrarModal();
     };
 
-    // --- SERVICIOS ---
+    // --- CATÁLOGO ---
     window.cargarServiciosAdmin = () => {
         onValue(ref(db, 'catalogo'), (snap) => {
             const cont = document.getElementById('listaServiciosAdmin');
-            cont.innerHTML = "<h3 style='font-size:1rem; margin-bottom:15px;'>SERVICIOS EN LA APP</h3>";
+            cont.innerHTML = "<h3 style='font-size:1rem; margin-bottom:15px;'>SERVICIOS ACTUALES</h3>";
             if(!snap.exists()) return;
             Object.entries(snap.val()).forEach(([id, s]) => {
                 const div = document.createElement('div');
@@ -213,7 +201,7 @@
                             <b>${s.nombre}</b>
                             <p>${s.categoria} | $${s.precio}</p>
                         </div>
-                        <button class="btn-del" onclick="borrarServicio('${id}')">Quitar</button>
+                        <button class="btn-del" onclick="eliminarServicio('${id}')">Quitar</button>
                     </div>
                 `;
                 cont.appendChild(div);
@@ -225,16 +213,14 @@
         const n = document.getElementById('sNombre').value, p = document.getElementById('sPrecio').value, c = document.getElementById('sCategoria').value;
         if(n && p) {
             await push(ref(db, 'catalogo'), { nombre: n, precio: p, categoria: c });
-            showToast("Servicio añadido");
             document.getElementById('sNombre').value = ""; document.getElementById('sPrecio').value = "";
         }
     };
 
-    window.borrarServicio = (id) => {
-        abrirModal("¿Quitar servicio?", "El cliente ya no podrá elegir este servicio.", async () => {
+    window.eliminarServicio = async (id) => {
+        if(confirm("¿Eliminar este servicio del catálogo?")) {
             await remove(ref(db, `catalogo/${id}`));
-            showToast("Servicio eliminado");
-        });
+        }
     };
 
     // INICIO
