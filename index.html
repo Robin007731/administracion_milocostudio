@@ -8,57 +8,61 @@
     <style>
         :root { 
             --gold: #ffffff; --bg: #3d3d3d; --card: #4a4a4a; --input-bg: #2b2b2b;
-            --red: #ff6b6b; --green: #25d366; --overlay: rgba(0,0,0,0.7);
+            --red: #ff6b6b; --green: #25d366; --overlay: rgba(0,0,0,0.8);
         }
 
-        body { margin: 0; background: var(--bg); color: #ffffff; font-family: 'Montserrat', sans-serif; }
+        body { margin: 0; background: var(--bg); color: #ffffff; font-family: 'Montserrat', sans-serif; padding-bottom: 50px; }
         header { background: rgba(0,0,0,0.2); padding: 30px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
         header h1 { font-family: 'Playfair Display'; color: var(--gold); margin: 0; font-size: 1.8rem; letter-spacing: 4px; text-transform: uppercase; }
 
         .container { max-width: 800px; margin: 30px auto; padding: 0 20px; }
         
+        /* Sistema de Pestañas */
         .tabs { display: flex; gap: 5px; margin-bottom: 30px; background: rgba(0,0,0,0.1); padding: 5px; border-radius: 10px; }
-        .tab { flex: 1; padding: 15px; text-align: center; cursor: pointer; font-weight: 600; border-radius: 8px; color: rgba(255,255,255,0.5); transition: 0.3s; font-size: 0.8rem; letter-spacing: 2px; }
+        .tab { flex: 1; padding: 15px; text-align: center; cursor: pointer; font-weight: 600; border-radius: 8px; color: rgba(255,255,255,0.4); transition: 0.3s; font-size: 0.8rem; letter-spacing: 2px; }
         .tab.active { background: var(--card); color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
 
         .panel { display: none; }
         .panel.active { display: block; animation: fadeIn 0.4s; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Tarjeta de Reserva con toda la info */
-        .reserva-item { 
+        /* Tarjeta de Turno / Servicio */
+        .item-card { 
             background: var(--card); border-radius: 12px; padding: 20px; margin-bottom: 15px; 
-            border-left: 5px solid var(--green); display: flex; flex-direction: column; gap: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border-left: 5px solid var(--green); display: flex; flex-direction: column; gap: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); position: relative;
         }
-        .reserva-header { display: flex; justify-content: space-between; align-items: flex-start; }
-        .reserva-info b { font-size: 1.2rem; color: var(--gold); }
-        .reserva-info p { margin: 5px 0; font-size: 0.9rem; opacity: 0.9; }
+        .item-header { display: flex; justify-content: space-between; align-items: flex-start; }
+        .item-info b { font-size: 1.1rem; color: var(--gold); display: block; margin-bottom: 5px; }
+        .item-info p { margin: 3px 0; font-size: 0.9rem; opacity: 0.8; }
         
+        /* Botón WhatsApp */
         .btn-wa { 
             background: var(--green); color: white; text-decoration: none; 
-            padding: 12px; border-radius: 8px; text-align: center;
-            font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 8px;
-            transition: 0.3s;
+            padding: 14px; border-radius: 8px; text-align: center;
+            font-weight: 700; font-size: 0.85rem; letter-spacing: 1px;
+            transition: 0.3s; display: block;
         }
         .btn-wa:hover { filter: brightness(1.1); }
         
-        .btn-del { background: rgba(255,107,107,0.1); color: var(--red); border: 1px solid var(--red); padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 0.7rem; font-weight: bold; }
+        .btn-del { background: rgba(255,107,107,0.1); color: var(--red); border: 1px solid var(--red); padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 0.65rem; font-weight: bold; text-transform: uppercase; }
         
-        input, select { width: 100%; padding: 12px; margin: 8px 0 15px; background: var(--input-bg); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 8px; box-sizing: border-box; }
-        .btn-save { background: #fff; color: #3d3d3d; width: 100%; padding: 15px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
+        /* Formulario */
+        .form-box { background: var(--card); padding: 25px; border-radius: 15px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.05); }
+        input, select { width: 100%; padding: 14px; margin: 8px 0 15px; background: var(--input-bg); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 8px; box-sizing: border-box; font-family: 'Montserrat'; }
+        .btn-primary { background: #fff; color: #3d3d3d; width: 100%; padding: 16px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; }
+        .btn-primary:hover { background: #eeeeee; }
 
-        /* Toast y Modales */
-        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; }
-        .toast { background: #fff; color: #333; padding: 15px 25px; border-radius: 8px; margin-top: 10px; font-weight: 600; box-shadow: 0 5px 15px rgba(0,0,0,0.3); animation: slideIn 0.3s ease; }
-        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-
+        /* Modal de confirmación */
         #custom-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--overlay); display: none; justify-content: center; align-items: center; z-index: 10000; backdrop-filter: blur(5px); }
-        .modal-content { background: var(--card); padding: 30px; border-radius: 15px; max-width: 400px; width: 90%; text-align: center; }
+        .modal-content { background: var(--card); padding: 30px; border-radius: 15px; max-width: 400px; width: 90%; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
         .modal-btns { display: flex; gap: 10px; margin-top: 25px; }
         .btn-modal { flex: 1; padding: 12px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; }
         .btn-confirm { background: var(--red); color: white; }
         .btn-cancel { background: #666; color: white; }
+
+        /* Toast */
+        #toast { position: fixed; bottom: 20px; right: 20px; background: #fff; color: #333; padding: 15px 25px; border-radius: 8px; font-weight: 600; box-shadow: 0 5px 15px rgba(0,0,0,0.3); display: none; z-index: 10001; }
     </style>
 </head>
 <body>
@@ -69,42 +73,44 @@
 
 <div class="container">
     <div class="tabs">
-        <div class="tab active" id="tabBtnAgenda">AGENDA</div>
-        <div class="tab" id="tabBtnServicios">CATÁLOGO</div>
+        <div class="tab active" id="tabAgenda" onclick="switchTab('agenda')">AGENDA</div>
+        <div class="tab" id="tabCatalogo" onclick="switchTab('catalogo')">CATÁLOGO</div>
     </div>
 
     <div id="panelAgenda" class="panel active">
-        <div style="background: var(--card); padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+        <div class="form-box">
+            <h3 style="margin-top:0; font-size: 1rem; letter-spacing: 1px;">FILTRAR POR FECHA</h3>
             <input type="date" id="filtroFecha">
-            <button class="btn-save" id="btnFiltrar">BUSCAR TURNOS</button>
+            <button class="btn-primary" onclick="cargarAgenda()">VER TURNOS DEL DÍA</button>
         </div>
         <div id="listaReservas"></div>
     </div>
 
-    <div id="panelServicios" class="panel">
-        <div style="background: var(--card); padding: 25px; border-radius: 12px;">
-            <h3 style="margin-top:0">AÑADIR SERVICIO</h3>
-            <input id="sNombre" placeholder="Nombre (ej: Corte + Barba)">
+    <div id="panelCatalogo" class="panel">
+        <div class="form-box">
+            <h3 style="margin-top:0; font-size: 1rem; letter-spacing: 1px;">AÑADIR SERVICIO</h3>
+            <input id="sNombre" placeholder="Nombre del servicio">
             <input id="sPrecio" type="number" placeholder="Precio ($)">
             <select id="sCategoria">
                 <option value="Cortes">Cortes</option>
                 <option value="Barba y Detalles">Barba y Detalles</option>
                 <option value="Colores">Colores</option>
             </select>
-            <button class="btn-save" id="btnGuardarServicio">GUARDAR EN CATÁLOGO</button>
+            <button class="btn-primary" id="btnGuardarServicio">AÑADIR A LA APP</button>
         </div>
-        <div id="listaServiciosAdmin" style="margin-top:20px"></div>
+        <div id="listaServiciosAdmin"></div>
     </div>
 </div>
 
-<div id="toast-container"></div>
+<div id="toast"></div>
+
 <div id="custom-modal">
     <div class="modal-content">
-        <h3 id="modal-title"></h3>
-        <p id="modal-text"></p>
+        <h3 id="mTitle"></h3>
+        <p id="mText" style="opacity: 0.7; font-size: 0.9rem;"></p>
         <div class="modal-btns">
-            <button class="btn-modal btn-cancel" id="modal-cancel">CANCELAR</button>
-            <button class="btn-modal btn-confirm" id="modal-confirm">SÍ, ELIMINAR</button>
+            <button class="btn-modal btn-cancel" onclick="cerrarModal()">CANCELAR</button>
+            <button class="btn-modal btn-confirm" id="btnConfirmarModal">ELIMINAR</button>
         </div>
     </div>
 </div>
@@ -123,112 +129,129 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    function showToast(msj) {
-        const c = document.getElementById('toast-container');
-        const t = document.createElement('div'); t.className = 'toast'; t.innerText = msj;
-        c.appendChild(t);
-        setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 3000);
+    // --- NOTIFICACIONES ---
+    function showToast(txt) {
+        const t = document.getElementById('toast');
+        t.innerText = txt; t.style.display = 'block';
+        setTimeout(() => { t.style.display = 'none'; }, 3000);
     }
 
-    let actionCB = null;
-    function confirm(title, text, cb) {
-        document.getElementById('modal-title').innerText = title;
-        document.getElementById('modal-text').innerText = text;
+    // --- MODAL ---
+    let callbackTemporal = null;
+    window.abrirModal = (titulo, texto, cb) => {
+        document.getElementById('mTitle').innerText = titulo;
+        document.getElementById('mText').innerText = texto;
         document.getElementById('custom-modal').style.display = 'flex';
-        actionCB = cb;
-    }
-    document.getElementById('modal-cancel').onclick = () => document.getElementById('custom-modal').style.display = 'none';
-    document.getElementById('modal-confirm').onclick = () => { if(actionCB) actionCB(); document.getElementById('custom-modal').style.display = 'none'; };
+        callbackTemporal = cb;
+    };
+    window.cerrarModal = () => document.getElementById('custom-modal').style.display = 'none';
+    document.getElementById('btnConfirmarModal').onclick = () => { if(callbackTemporal) callbackTemporal(); cerrarModal(); };
 
-    // --- LÓGICA DE AGENDA ---
-    async function cargarAgenda() {
-        const fecha = document.getElementById('filtroFecha').value;
-        const contenedor = document.getElementById('listaReservas');
-        contenedor.innerHTML = "<p style='text-align:center'>Buscando...</p>";
-        
-        const snap = await get(query(ref(db, 'reservas'), orderByChild('fecha'), equalTo(fecha)));
-        contenedor.innerHTML = "";
-        
-        if (!snap.exists()) { contenedor.innerHTML = "<p style='text-align:center; opacity:0.5'>No hay reservas para este día.</p>"; return; }
-        
-        Object.entries(snap.val()).sort((a,b) => a[1].hora.localeCompare(b[1].hora)).forEach(([id, r]) => {
-            const div = document.createElement('div'); div.className = 'reserva-item';
-            
-            // Limpiar el número de teléfono por si el usuario puso espacios o signos
-            const telLimpio = r.tel.replace(/\D/g, '');
-            
-            div.innerHTML = `
-                <div class="reserva-header">
-                    <div class="reserva-info">
-                        <b>${r.hora}hs - ${r.nombre}</b>
-                        <p>📍 <b>Servicio:</b> ${r.servicio}</p>
-                        <p>📱 <b>Tel:</b> ${r.tel}</p>
-                    </div>
-                    <button class="btn-del" data-id="${id}">X</button>
-                </div>
-                <a href="https://wa.me/${telLimpio}" class="btn-wa" target="_blank">
-                    MENSAJE DE WHATSAPP
-                </a>
-            `;
-            contenedor.appendChild(div);
-        });
-
-        contenedor.querySelectorAll('.btn-del').forEach(btn => {
-            btn.onclick = () => confirm("Eliminar Turno", "¿Deseas borrar esta cita de la agenda?", async () => {
-                await remove(ref(db, `reservas/${btn.dataset.id}`));
-                showToast("Turno borrado");
-                cargarAgenda();
-            });
-        });
-    }
-
-    // --- GESTIÓN DE SERVICIOS ---
-    function cargarServiciosAdmin() {
-        const container = document.getElementById('listaServiciosAdmin');
-        onValue(ref(db, 'catalogo'), (snap) => {
-            container.innerHTML = "<h3>SERVICIOS EN CATÁLOGO</h3>";
-            if (!snap.exists()) return;
-            Object.entries(snap.val()).forEach(([id, s]) => {
-                const div = document.createElement('div'); div.className = 'reserva-item';
-                div.style.borderLeftColor = "white";
-                div.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <div>
-                            <b>${s.nombre}</b><br>
-                            <small>${s.categoria} | $${s.precio}</small>
-                        </div>
-                        <button class="btn-del" data-id="${id}">QUITAR</button>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
-            container.querySelectorAll('.btn-del').forEach(btn => {
-                btn.onclick = () => confirm("Quitar del Catálogo", "¿Deseas eliminar este servicio?", async () => {
-                    await remove(ref(db, `catalogo/${btn.dataset.id}`));
-                    showToast("Servicio eliminado");
-                });
-            });
-        });
-    }
-
-    document.getElementById('btnGuardarServicio').onclick = async () => {
-        const n = document.getElementById('sNombre').value, p = document.getElementById('sPrecio').value, c = document.getElementById('sCategoria').value;
-        if(n && p) {
-            await push(ref(db, 'catalogo'), { nombre: n, precio: p, categoria: c });
-            showToast("Servicio guardado");
-            document.getElementById('sNombre').value = ""; document.getElementById('sPrecio').value = "";
+    // --- TABS ---
+    window.switchTab = (target) => {
+        document.querySelectorAll('.tab, .panel').forEach(el => el.classList.remove('active'));
+        if(target === 'agenda') {
+            document.getElementById('tabAgenda').classList.add('active');
+            document.getElementById('panelAgenda').classList.add('active');
+            cargarAgenda();
+        } else {
+            document.getElementById('tabCatalogo').classList.add('active');
+            document.getElementById('panelCatalogo').classList.add('active');
+            cargarServiciosAdmin();
         }
     };
 
-    // Navegación
-    document.getElementById('tabBtnAgenda').onclick = () => { switchTab('tabBtnAgenda', 'panelAgenda'); cargarAgenda(); };
-    document.getElementById('tabBtnServicios').onclick = () => { switchTab('tabBtnServicios', 'panelServicios'); cargarServiciosAdmin(); };
-    function switchTab(t, p) {
-        document.querySelectorAll('.tab, .panel').forEach(el => el.classList.remove('active'));
-        document.getElementById(t).classList.add('active'); document.getElementById(p).classList.add('active');
-    }
+    // --- AGENDA ---
+    window.cargarAgenda = async () => {
+        const fecha = document.getElementById('filtroFecha').value;
+        const cont = document.getElementById('listaReservas');
+        cont.innerHTML = "<p style='text-align:center; opacity:0.5;'>Buscando turnos...</p>";
+        
+        const snap = await get(query(ref(db, 'reservas'), orderByChild('fecha'), equalTo(fecha)));
+        cont.innerHTML = "";
+        
+        if(!snap.exists()) {
+            cont.innerHTML = "<p style='text-align:center; opacity:0.5;'>No hay turnos para esta fecha.</p>";
+            return;
+        }
 
-    document.getElementById('btnFiltrar').onclick = cargarAgenda;
+        Object.entries(snap.val()).sort((a,b) => a[1].hora.localeCompare(b[1].hora)).forEach(([id, r]) => {
+            const div = document.createElement('div');
+            div.className = 'item-card';
+            // Limpiar número para WhatsApp
+            const telLimpio = r.tel.replace(/\D/g, '');
+            
+            div.innerHTML = `
+                <div class="item-header">
+                    <div class="item-info">
+                        <b>${r.hora}hs - ${r.nombre}</b>
+                        <p>✂️ <b>Servicio:</b> ${r.servicio}</p>
+                        <p>📞 <b>Tel:</b> ${r.tel}</p>
+                    </div>
+                    <button class="btn-del" onclick="eliminarTurno('${id}')">Borrar</button>
+                </div>
+                <a href="https://wa.me/${telLimpio}" class="btn-wa" target="_blank">HABLAR POR WHATSAPP</a>
+            `;
+            cont.appendChild(div);
+        });
+    };
+
+    window.eliminarTurno = (id) => {
+        abrirModal("Eliminar Turno", "¿Estás seguro de que quieres borrar esta cita de la agenda?", async () => {
+            await remove(ref(db, `reservas/${id}`));
+            showToast("Turno eliminado con éxito");
+            cargarAgenda();
+        });
+    };
+
+    // --- SERVICIOS ---
+    window.cargarServiciosAdmin = () => {
+        const cont = document.getElementById('listaServiciosAdmin');
+        onValue(ref(db, 'catalogo'), (snap) => {
+            cont.innerHTML = "<h3 style='margin-bottom:15px; font-size:1rem;'>SERVICIOS ACTIVOS</h3>";
+            if(!snap.exists()) { cont.innerHTML += "<p style='opacity:0.5'>El catálogo está vacío.</p>"; return; }
+            
+            Object.entries(snap.val()).forEach(([id, s]) => {
+                const div = document.createElement('div');
+                div.className = 'item-card';
+                div.style.borderLeftColor = "white";
+                div.innerHTML = `
+                    <div class="item-header" style="align-items:center;">
+                        <div class="item-info" style="margin:0">
+                            <b>${s.nombre}</b>
+                            <p>${s.categoria} | $${s.precio}</p>
+                        </div>
+                        <button class="btn-del" onclick="eliminarServicio('${id}')">Quitar</button>
+                    </div>
+                `;
+                cont.appendChild(div);
+            });
+        });
+    };
+
+    document.getElementById('btnGuardarServicio').onclick = async () => {
+        const n = document.getElementById('sNombre').value;
+        const p = document.getElementById('sPrecio').value;
+        const c = document.getElementById('sCategoria').value;
+        
+        if(n && p) {
+            await push(ref(db, 'catalogo'), { nombre: n, precio: p, categoria: c });
+            showToast("Servicio añadido al catálogo");
+            document.getElementById('sNombre').value = "";
+            document.getElementById('sPrecio').value = "";
+        } else {
+            showToast("Error: Completa nombre y precio");
+        }
+    };
+
+    window.eliminarServicio = (id) => {
+        abrirModal("Eliminar Servicio", "¿Deseas quitar este servicio del catálogo?", async () => {
+            await remove(ref(db, `catalogo/${id}`));
+            showToast("Servicio eliminado");
+        });
+    };
+
+    // Inicialización
     document.getElementById('filtroFecha').valueAsDate = new Date();
     cargarAgenda();
 </script>
