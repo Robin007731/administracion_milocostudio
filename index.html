@@ -3,144 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MILOCOSTUDIO | Administración</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <title>MILOCOSTUDIO | Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        :root { 
-            --gold: #ffffff; --bg: #3d3d3d; --card: rgba(74, 74, 74, 0.9); 
-            --input-bg: rgba(43, 43, 43, 0.8);
-            --red: #ff4d4d; --green: #25d366; --overlay: rgba(0,0,0,0.8);
-        }
-        
-        body { 
-            margin: 0; 
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), 
-                        url('199797.jpg'); 
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            color: #ffffff; 
-            font-family: 'Montserrat', sans-serif; 
-            padding-bottom: 50px; 
-            min-height: 100vh;
-        }
-
-        header { 
-            background: rgba(0,0,0,0.5); 
-            backdrop-filter: blur(10px);
-            padding: 30px; 
-            text-align: center; 
-            border-bottom: 1px solid rgba(255,255,255,0.1); 
-        }
-        header h1 { 
-            font-family: 'Playfair Display'; 
-            color: var(--gold); 
-            margin: 0; 
-            font-size: 1.8rem; 
-            letter-spacing: 4px; 
-            text-transform: uppercase; 
-        }
-        
-        .container { max-width: 800px; margin: 30px auto; padding: 0 20px; }
-        
-        /* TABS */
-        .tabs { display: flex; gap: 5px; margin-bottom: 30px; background: rgba(0,0,0,0.4); padding: 5px; border-radius: 10px; }
-        .tab { flex: 1; padding: 15px; text-align: center; cursor: pointer; font-weight: 600; border-radius: 8px; color: rgba(255,255,255,0.4); transition: 0.3s; font-size: 0.8rem; letter-spacing: 2px; }
-        .tab.active { background: #fff; color: #3d3d3d; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        .panel { display: none; }
-        .panel.active { display: block; }
-
-        /* CARDS DE TURNOS */
-        .item-card { 
-            background: var(--card); 
-            backdrop-filter: blur(5px);
-            border-radius: 12px; padding: 20px; margin-bottom: 15px; 
-            border-left: 5px solid var(--green); display: flex; flex-direction: column; gap: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3); animation: slideUp 0.3s ease;
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .item-header { display: flex; justify-content: space-between; align-items: flex-start; }
-        .item-info b { font-size: 1.2rem; color: #fff; display: block; margin-bottom: 5px; }
-        .item-info p { margin: 4px 0; font-size: 0.95rem; opacity: 0.9; line-height: 1.4; }
-        
-        .btn-wa { 
-            background: var(--green); color: white; text-decoration: none; 
-            padding: 14px; border-radius: 8px; text-align: center;
-            font-weight: 700; font-size: 0.9rem; letter-spacing: 1px; display: block;
-            transition: 0.3s;
-        }
-        .btn-wa:hover { filter: brightness(1.1); transform: scale(1.02); }
-        
-        .btn-del { 
-            background: rgba(255,77,77,0.2); color: #ff6b6b; border: 1px solid #ff6b6b; 
-            padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 0.7rem; font-weight: bold; 
-        }
-        
-        /* FORMULARIOS */
-        .form-box { background: rgba(0,0,0,0.4); padding: 25px; border-radius: 15px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(5px); }
-        input, select { width: 100%; padding: 14px; margin: 8px 0 15px; background: var(--input-bg); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 8px; box-sizing: border-box; font-family: 'Montserrat'; }
-        
-        .btn-primary { background: #fff; color: #3d3d3d; width: 100%; padding: 16px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; }
-        .btn-primary:hover { background: #e0e0e0; }
-
-        .admin-footer-info { margin-top: 40px; padding: 20px; background: rgba(0,0,0,0.4); border-radius: 15px; text-align: center; border: 1px dashed rgba(255,255,255,0.2); }
-        .footer-link { display: block; color: #fff; text-decoration: none; margin: 10px 0; font-size: 0.9rem; opacity: 0.7; transition: 0.3s; }
-
-        #custom-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--overlay); display: none; justify-content: center; align-items: center; z-index: 10000; backdrop-filter: blur(8px); }
-        .modal-content { background: #333; padding: 30px; border-radius: 15px; max-width: 400px; width: 90%; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
+        body { background: #1a1a1a; color: white; font-family: 'Montserrat', sans-serif; margin: 0; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .card { background: #333; padding: 20px; border-radius: 10px; margin-bottom: 15px; border-left: 5px solid #25d366; position: relative; }
+        .btn-del { position: absolute; top: 10px; right: 10px; background: #ff4d4d; border: none; color: white; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab { flex: 1; padding: 10px; text-align: center; background: #444; cursor: pointer; border-radius: 5px; }
+        .tab.active { background: white; color: black; font-weight: bold; }
+        input, select { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: none; }
+        .btn-wa { display: block; background: #25d366; color: white; text-decoration: none; text-align: center; padding: 10px; border-radius: 5px; margin-top: 10px; font-weight: bold; }
     </style>
 </head>
 <body>
-
-<header>
-    <h1>ADMIN MILOCOSTUDIO</h1>
-</header>
-
 <div class="container">
+    <h2>ADMIN MILOCOSTUDIO</h2>
     <div class="tabs">
-        <div class="tab active" id="tabAgenda" onclick="switchTab('agenda')">AGENDA</div>
-        <div class="tab" id="tabCatalogo" onclick="switchTab('catalogo')">CATÁLOGO</div>
+        <div class="tab active" onclick="switchTab('agenda')">AGENDA</div>
+        <div class="tab" onclick="switchTab('catalogo')">CATÁLOGO</div>
     </div>
 
-    <div id="panelAgenda" class="panel active">
-        <div class="form-box">
-            <h3 style="margin:0 0 15px 0; font-size: 1rem; letter-spacing: 1px;">VER AGENDA POR DÍA</h3>
-            <input type="date" id="filtroFecha">
-            <div id="contador" style="font-size: 0.8rem; color: var(--green); font-weight: bold; margin-top: 5px; text-transform: uppercase;">Cargando...</div>
+    <div id="panelAgenda">
+        <input type="date" id="filtroFecha">
+        <div id="listaAgenda"></div>
+    </div>
+
+    <div id="panelCatalogo" style="display:none">
+        <div class="card" style="border-left-color: white">
+            <input id="sNom" placeholder="Nombre Servicio">
+            <input id="sPre" type="number" placeholder="Precio">
+            <button onclick="guardarServicio()" style="width:100%; padding:10px; background:white; cursor:pointer">Añadir</button>
         </div>
-        <div id="listaReservas"></div>
-    </div>
-
-    <div id="panelCatalogo" class="panel">
-        <div class="form-box">
-            <h3 style="margin-top:0; font-size: 1rem; letter-spacing: 1px;">AÑADIR SERVICIO</h3>
-            <input id="sNombre" placeholder="Nombre del servicio">
-            <input id="sPrecio" type="number" placeholder="Precio ($)">
-            <select id="sCategoria">
-                <option value="Cortes">Cortes</option>
-                <option value="Barba y Detalles">Barba y Detalles</option>
-                <option value="Colores">Colores</option>
-            </select>
-            <button class="btn-primary" id="btnGuardarServicio">GUARDAR EN CATÁLOGO</button>
-        </div>
-        <div id="listaServiciosAdmin"></div>
-    </div>
-
-    <div class="admin-footer-info">
-        <a href="https://www.instagram.com/miloco.studio/" target="_blank" class="footer-link">📸 @miloco.studio</a>
-    </div>
-</div>
-
-<div id="custom-modal">
-    <div class="modal-content">
-        <h3 id="mTitle">¿Eliminar Turno?</h3>
-        <p style="opacity: 0.7; font-size: 0.9rem;">Esta acción no se puede deshacer.</p>
-        <div style="display:flex; gap:10px; margin-top:20px;">
-            <button class="btn-primary" style="background:#666; color:white;" onclick="cerrarModal()">CANCELAR</button>
-            <button class="btn-primary" style="background:#ff4d4d; color:white;" id="btnConfirmarEliminar">SÍ, BORRAR</button>
-        </div>
+        <div id="listaCat"></div>
     </div>
 </div>
 
@@ -157,122 +53,57 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
+    let currentUnsub = null;
 
-    let unsubAgenda = null;
-    let idParaBorrar = "";
+    // Fecha hoy
+    const inputF = document.getElementById('filtroFecha');
+    inputF.value = new Date().toISOString().split('T')[0];
+    inputF.onchange = () => cargarAgenda();
 
-    // Poner fecha de hoy por defecto al cargar
-    const inputFecha = document.getElementById('filtroFecha');
-    const hoy = new Date();
-    inputFecha.value = hoy.toISOString().split('T')[0];
-
-    window.switchTab = (target) => {
-        document.querySelectorAll('.tab, .panel').forEach(el => el.classList.remove('active'));
-        if(target === 'agenda') {
-            document.getElementById('tabAgenda').classList.add('active');
-            document.getElementById('panelAgenda').classList.add('active');
-            cargarAgenda();
-        } else {
-            document.getElementById('tabCatalogo').classList.add('active');
-            document.getElementById('panelCatalogo').classList.add('active');
-            cargarServiciosAdmin();
-        }
+    window.switchTab = t => {
+        document.getElementById('panelAgenda').style.display = t === 'agenda' ? 'block' : 'none';
+        document.getElementById('panelCatalogo').style.display = t === 'catalogo' ? 'block' : 'none';
+        document.querySelectorAll('.tab').forEach(el => el.classList.toggle('active', el.innerText.toLowerCase().includes(t)));
+        if(t==='catalogo') cargarCat(); else cargarAgenda();
     };
 
-    window.cargarAgenda = () => {
-        const fecha = document.getElementById('filtroFecha').value;
-        const cont = document.getElementById('listaReservas');
-        const contTxt = document.getElementById('contador');
-
-        if(unsubAgenda) unsubAgenda();
-
-        const q = query(ref(db, 'reservas'), orderByChild('fecha'), equalTo(fecha));
-        
-        unsubAgenda = onValue(q, (snap) => {
+    function cargarAgenda() {
+        if(currentUnsub) currentUnsub();
+        const q = query(ref(db, 'reservas'), orderByChild('fecha'), equalTo(inputF.value));
+        currentUnsub = onValue(q, snap => {
+            const cont = document.getElementById('listaAgenda');
             cont.innerHTML = "";
-            if(!snap.exists()) {
-                cont.innerHTML = "<p style='text-align:center; opacity:0.5; margin-top:30px;'>No hay turnos para este día.</p>";
-                contTxt.innerText = "0 TURNOS";
-                return;
-            }
-
-            const turnos = Object.entries(snap.val()).sort((a,b) => a[1].hora.localeCompare(b[1].hora));
-            contTxt.innerText = `${turnos.length} TURNOS REGISTRADOS`;
-
-            turnos.forEach(([id, r]) => {
-                const telLimpio = r.tel.replace(/\D/g, '');
-                const div = document.createElement('div');
-                div.className = 'item-card';
-                div.innerHTML = `
-                    <div class="item-header">
-                        <div class="item-info">
-                            <b>${r.hora}hs - ${r.nombre}</b>
-                            <p>✂️ ${r.servicio}</p>
-                            <p>📞 ${r.tel}</p>
-                        </div>
-                        <button class="btn-del" onclick="confirmarBorrar('${id}')">BORRAR</button>
-                    </div>
-                    <a href="https://wa.me/${telLimpio}" class="btn-wa" target="_blank">MENSAJE DE WHATSAPP</a>
-                `;
-                cont.appendChild(div);
+            if(!snap.exists()) return cont.innerHTML = "<p>Sin turnos.</p>";
+            Object.entries(snap.val()).sort((a,b) => a[1].hora.localeCompare(b[1].hora)).forEach(([id, r]) => {
+                const d = document.createElement('div'); d.className = 'card';
+                d.innerHTML = `<button class="btn-del" onclick="borrar('${id}')">X</button>
+                    <b>${r.hora} - ${r.nombre}</b><br><small>${r.servicio}</small>
+                    <a href="https://wa.me/${r.tel.replace(/\D/g,'')}" class="btn-wa" target="_blank">WHATSAPP</a>`;
+                cont.appendChild(d);
             });
         });
+    }
+
+    window.borrar = id => confirm("¿Eliminar?") && remove(ref(db, `reservas/${id}`));
+
+    function cargarCat() {
+        onValue(ref(db, 'catalogo'), snap => {
+            const cont = document.getElementById('listaCat'); cont.innerHTML = "";
+            if(snap.exists()) Object.entries(snap.val()).forEach(([id, s]) => {
+                const d = document.createElement('div'); d.className = 'card'; d.style.borderLeftColor = "white";
+                d.innerHTML = `<b>${s.nombre}</b> - $${s.precio} <button class="btn-del" onclick="borrarCat('${id}')">X</button>`;
+                cont.appendChild(d);
+            });
+        });
+    }
+
+    window.guardarServicio = () => {
+        const n = document.getElementById('sNom').value, p = document.getElementById('sPre').value;
+        if(n && p) push(ref(db, 'catalogo'), {nombre:n, precio:p});
     };
 
-    // Escuchar cambios en el input de fecha
-    inputFecha.addEventListener('change', cargarAgenda);
-
-    window.confirmarBorrar = (id) => {
-        idParaBorrar = id;
-        document.getElementById('custom-modal').style.display = 'flex';
-    };
-
-    window.cerrarModal = () => document.getElementById('custom-modal').style.display = 'none';
+    window.borrarCat = id => remove(ref(db, `catalogo/${id}`));
     
-    document.getElementById('btnConfirmarEliminar').onclick = async () => {
-        await remove(ref(db, `reservas/${idParaBorrar}`));
-        cerrarModal();
-    };
-
-    window.cargarServiciosAdmin = () => {
-        onValue(ref(db, 'catalogo'), (snap) => {
-            const cont = document.getElementById('listaServiciosAdmin');
-            cont.innerHTML = "<h3 style='font-size:1rem; margin:20px 0 15px; letter-spacing:1px;'>SERVICIOS ACTUALES</h3>";
-            if(!snap.exists()) return;
-            Object.entries(snap.val()).forEach(([id, s]) => {
-                const div = document.createElement('div');
-                div.className = 'item-card'; div.style.borderLeftColor = "#fff";
-                div.innerHTML = `
-                    <div class="item-header" style="align-items:center;">
-                        <div class="item-info" style="margin:0">
-                            <b>${s.nombre}</b>
-                            <p>${s.categoria} | $${s.precio}</p>
-                        </div>
-                        <button class="btn-del" onclick="eliminarServicio('${id}')">QUITAR</button>
-                    </div>
-                `;
-                cont.appendChild(div);
-            });
-        });
-    };
-
-    document.getElementById('btnGuardarServicio').onclick = async () => {
-        const n = document.getElementById('sNombre').value, p = document.getElementById('sPrecio').value, c = document.getElementById('sCategoria').value;
-        if(n && p) {
-            await push(ref(db, 'catalogo'), { nombre: n, precio: p, categoria: c });
-            document.getElementById('sNombre').value = ""; document.getElementById('sPrecio').value = "";
-        } else {
-            alert("Por favor completa nombre y precio");
-        }
-    };
-
-    window.eliminarServicio = async (id) => {
-        if(confirm("¿Eliminar este servicio del catálogo?")) {
-            await remove(ref(db, `catalogo/${id}`));
-        }
-    };
-
-    // Iniciar
     cargarAgenda();
 </script>
 </body>
