@@ -6,22 +6,45 @@
     <title>MILOCOSTUDIO | Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        body { background: #1a1a1a; color: white; font-family: 'Montserrat', sans-serif; margin: 0; padding: 20px; }
-        .container { max-width: 600px; margin: 0 auto; }
-        .card { background: #333; padding: 20px; border-radius: 10px; margin-bottom: 15px; border-left: 5px solid #25d366; position: relative; }
-        .btn-del { position: absolute; top: 10px; right: 10px; background: #ff4d4d; border: none; color: white; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
-        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-        .tab { flex: 1; padding: 10px; text-align: center; background: #444; cursor: pointer; border-radius: 5px; }
+        :root { 
+            --gold: #ffffff; --card: rgba(74, 74, 74, 0.9); --text: #ffffff;
+            --input-bg: rgba(43, 43, 43, 0.8); --overlay: rgba(0,0,0,0.85);
+        }
+
+        body { margin: 0; background: #000; color: var(--text); font-family: 'Montserrat', sans-serif; min-height: 100vh; overflow-x: hidden; padding: 20px; box-sizing: border-box; }
+        
+        /* Fondo idéntico al de reservas */
+        .bg-fixed { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url('199797.jpg'); background-size: cover; background-position: center; z-index: -1; }
+
+        .container { max-width: 600px; margin: 40px auto; position: relative; z-index: 10; }
+        
+        h2 { text-align: center; letter-spacing: 5px; font-weight: 300; margin-bottom: 30px; text-shadow: 2px 2px 10px rgba(0,0,0,0.5); }
+
+        .card { background: var(--card); padding: 20px; border-radius: 12px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        
+        .btn-del { position: absolute; top: 10px; right: 10px; background: #ff4d4d; border: none; color: white; padding: 5px 12px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        
+        .tabs { display: flex; gap: 10px; margin-bottom: 25px; }
+        .tab { flex: 1; padding: 12px; text-align: center; background: rgba(255,255,255,0.1); cursor: pointer; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); transition: 0.3s; letter-spacing: 2px; font-size: 0.8rem; }
         .tab.active { background: white; color: black; font-weight: bold; }
-        input, select { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: none; box-sizing: border-box; }
-        .btn-wa { display: block; background: #25d366; color: white; text-decoration: none; text-align: center; padding: 10px; border-radius: 5px; margin-top: 10px; font-weight: bold; }
-        .flex-row { display: flex; gap: 5px; align-items: center; }
-        .btn-add-cat { background: #555; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; white-space: nowrap; }
+
+        input, select { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: var(--input-bg); color: white; box-sizing: border-box; }
+        
+        .btn-wa { display: block; background: #25d366; color: white; text-decoration: none; text-align: center; padding: 12px; border-radius: 8px; margin-top: 10px; font-weight: bold; letter-spacing: 1px; }
+        
+        .flex-row { display: flex; gap: 8px; align-items: center; }
+        .btn-add-cat { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 12px; border-radius: 8px; cursor: pointer; white-space: nowrap; font-size: 0.8rem; }
+
+        .btn-main { width: 100%; padding: 15px; background: white; color: black; font-weight: bold; border: none; border-radius: 8px; margin-top: 10px; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; }
     </style>
 </head>
 <body>
+
+<div class="bg-fixed"></div>
+
 <div class="container">
     <h2>ADMIN MILOCOSTUDIO</h2>
+    
     <div class="tabs">
         <div class="tab active" onclick="switchTab('agenda')">AGENDA</div>
         <div class="tab" onclick="switchTab('catalogo')">CATÁLOGO</div>
@@ -33,9 +56,10 @@
     </div>
 
     <div id="panelCatalogo" style="display:none">
-        <div class="card" style="border-left-color: white">
-            <input id="sNom" placeholder="Nombre Servicio">
-            <input id="sPre" type="number" placeholder="Precio">
+        <div class="card">
+            <h4 style="margin:0 0 10px 0; letter-spacing: 2px; font-weight: 400;">NUEVO SERVICIO</h4>
+            <input id="sNom" placeholder="Nombre del Servicio">
+            <input id="sPre" type="number" placeholder="Precio ($)">
             
             <div class="flex-row">
                 <select id="sCat">
@@ -44,10 +68,10 @@
                     <option value="DETALLES">DETALLES</option>
                     <option value="COLORES">COLORES</option>
                 </select>
-                <button class="btn-add-cat" onclick="nuevaCategoria()">+ Nueva</button>
+                <button class="btn-add-cat" onclick="nuevaCategoria()">+ SECCIÓN</button>
             </div>
 
-            <button onclick="guardarServicio()" style="width:100%; padding:10px; background:white; cursor:pointer; font-weight: bold; border: none; border-radius: 5px; margin-top: 5px;">Añadir Servicio</button>
+            <button onclick="guardarServicio()" class="btn-main">Añadir al Menú</button>
         </div>
         <div id="listaCat"></div>
     </div>
@@ -85,28 +109,29 @@
         currentUnsub = onValue(q, snap => {
             const cont = document.getElementById('listaAgenda');
             cont.innerHTML = "";
-            if(!snap.exists()) return cont.innerHTML = "<p>Sin turnos.</p>";
+            if(!snap.exists()) return cont.innerHTML = "<p style='text-align:center; opacity:0.5;'>Sin turnos para esta fecha.</p>";
             Object.entries(snap.val()).sort((a,b) => a[1].hora.localeCompare(b[1].hora)).forEach(([id, r]) => {
                 const d = document.createElement('div'); d.className = 'card';
+                d.style.borderLeft = "5px solid #25d366";
                 d.innerHTML = `<button class="btn-del" onclick="borrar('${id}')">X</button>
-                    <b>${r.hora} - ${r.nombre}</b><br><small>${r.servicio}</small>
-                    <a href="https://wa.me/${r.tel.replace(/\D/g,'')}" class="btn-wa" target="_blank">WHATSAPP</a>`;
+                    <b style="font-size:1.1rem;">${r.hora} hs</b> - ${r.nombre}<br>
+                    <small style="opacity:0.8">${r.servicio}</small>
+                    <a href="https://wa.me/${r.tel.replace(/\D/g,'')}" class="btn-wa" target="_blank">HABLAR POR WHATSAPP</a>`;
                 cont.appendChild(d);
             });
         });
     }
 
-    window.borrar = id => confirm("¿Eliminar reserva?") && remove(ref(db, `reservas/${id}`));
+    window.borrar = id => confirm("¿Deseas eliminar esta reserva?") && remove(ref(db, `reservas/${id}`));
 
     function cargarCat() {
         onValue(ref(db, 'catalogo'), snap => {
             const cont = document.getElementById('listaCat'); cont.innerHTML = "";
             if(snap.exists()) {
-                const items = Object.entries(snap.val());
-                items.forEach(([id, s]) => {
-                    const d = document.createElement('div'); d.className = 'card'; d.style.borderLeftColor = "white";
+                Object.entries(snap.val()).forEach(([id, s]) => {
+                    const d = document.createElement('div'); d.className = 'card';
                     d.innerHTML = `<b>${s.nombre}</b> - $${s.precio} <br> 
-                                   <small style="color: #aaa; text-transform: uppercase;">Sección: ${s.categoria || 'Sin categoría'}</small>
+                                   <small style="color: #ccc; text-transform: uppercase; font-size:0.7rem; letter-spacing:1px;">Sección: ${s.categoria || 'Sin categoría'}</small>
                                    <button class="btn-del" onclick="borrarCat('${id}')">X</button>`;
                     cont.appendChild(d);
                 });
@@ -115,7 +140,7 @@
     }
 
     window.nuevaCategoria = () => {
-        const nombre = prompt("Nombre de la nueva sección (ej: TRATAMIENTOS):");
+        const nombre = prompt("Nombre de la nueva sección:");
         if (nombre) {
             const sel = document.getElementById('sCat');
             const opt = document.createElement('option');
@@ -135,11 +160,11 @@
             document.getElementById('sNom').value = "";
             document.getElementById('sPre').value = "";
         } else {
-            alert("Completa todos los campos");
+            alert("Por favor, completa nombre y precio.");
         }
     };
 
-    window.borrarCat = id => confirm("¿Eliminar servicio?") && remove(ref(db, `catalogo/${id}`));
+    window.borrarCat = id => confirm("¿Eliminar este servicio del catálogo?") && remove(ref(db, `catalogo/${id}`));
     
     cargarAgenda();
 </script>
