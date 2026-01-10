@@ -13,8 +13,10 @@
         .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
         .tab { flex: 1; padding: 10px; text-align: center; background: #444; cursor: pointer; border-radius: 5px; }
         .tab.active { background: white; color: black; font-weight: bold; }
-        input, select { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: none; }
+        input, select { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: none; box-sizing: border-box; }
         .btn-wa { display: block; background: #25d366; color: white; text-decoration: none; text-align: center; padding: 10px; border-radius: 5px; margin-top: 10px; font-weight: bold; }
+        .flex-row { display: flex; gap: 5px; align-items: center; }
+        .btn-add-cat { background: #555; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; white-space: nowrap; }
     </style>
 </head>
 <body>
@@ -34,7 +36,18 @@
         <div class="card" style="border-left-color: white">
             <input id="sNom" placeholder="Nombre Servicio">
             <input id="sPre" type="number" placeholder="Precio">
-            <button onclick="guardarServicio()" style="width:100%; padding:10px; background:white; cursor:pointer">Añadir</button>
+            
+            <div class="flex-row">
+                <select id="sCat">
+                    <option value="CORTES">CORTES</option>
+                    <option value="BARBA">BARBA</option>
+                    <option value="DETALLES">DETALLES</option>
+                    <option value="COLORES">COLORES</option>
+                </select>
+                <button class="btn-add-cat" onclick="nuevaCategoria()">+ Nueva</button>
+            </div>
+
+            <button onclick="guardarServicio()" style="width:100%; padding:10px; background:white; cursor:pointer; font-weight: bold; border: none; border-radius: 5px; margin-top: 5px;">Añadir Servicio</button>
         </div>
         <div id="listaCat"></div>
     </div>
@@ -55,7 +68,6 @@
     const db = getDatabase(app);
     let currentUnsub = null;
 
-    // Fecha hoy
     const inputF = document.getElementById('filtroFecha');
     inputF.value = new Date().toISOString().split('T')[0];
     inputF.onchange = () => cargarAgenda();
@@ -63,7 +75,7 @@
     window.switchTab = t => {
         document.getElementById('panelAgenda').style.display = t === 'agenda' ? 'block' : 'none';
         document.getElementById('panelCatalogo').style.display = t === 'catalogo' ? 'block' : 'none';
-        document.querySelectorAll('.tab').forEach(el => el.classList.toggle('active', el.innerText.toLowerCase().includes(t)));
+        document.querySelectorAll('.tab').forEach(el => el.classList.toggle('active', el.innerText.toLowerCase().includes(t.toLowerCase())));
         if(t==='catalogo') cargarCat(); else cargarAgenda();
     };
 
@@ -84,25 +96,50 @@
         });
     }
 
-    window.borrar = id => confirm("¿Eliminar?") && remove(ref(db, `reservas/${id}`));
+    window.borrar = id => confirm("¿Eliminar reserva?") && remove(ref(db, `reservas/${id}`));
 
     function cargarCat() {
         onValue(ref(db, 'catalogo'), snap => {
             const cont = document.getElementById('listaCat'); cont.innerHTML = "";
-            if(snap.exists()) Object.entries(snap.val()).forEach(([id, s]) => {
-                const d = document.createElement('div'); d.className = 'card'; d.style.borderLeftColor = "white";
-                d.innerHTML = `<b>${s.nombre}</b> - $${s.precio} <button class="btn-del" onclick="borrarCat('${id}')">X</button>`;
-                cont.appendChild(d);
-            });
+            if(snap.exists()) {
+                const items = Object.entries(snap.val());
+                items.forEach(([id, s]) => {
+                    const d = document.createElement('div'); d.className = 'card'; d.style.borderLeftColor = "white";
+                    d.innerHTML = `<b>${s.nombre}</b> - $${s.precio} <br> 
+                                   <small style="color: #aaa; text-transform: uppercase;">Sección: ${s.categoria || 'Sin categoría'}</small>
+                                   <button class="btn-del" onclick="borrarCat('${id}')">X</button>`;
+                    cont.appendChild(d);
+                });
+            }
         });
     }
 
-    window.guardarServicio = () => {
-        const n = document.getElementById('sNom').value, p = document.getElementById('sPre').value;
-        if(n && p) push(ref(db, 'catalogo'), {nombre:n, precio:p});
+    window.nuevaCategoria = () => {
+        const nombre = prompt("Nombre de la nueva sección (ej: TRATAMIENTOS):");
+        if (nombre) {
+            const sel = document.getElementById('sCat');
+            const opt = document.createElement('option');
+            opt.value = nombre.toUpperCase();
+            opt.innerText = nombre.toUpperCase();
+            sel.appendChild(opt);
+            sel.value = opt.value;
+        }
     };
 
-    window.borrarCat = id => remove(ref(db, `catalogo/${id}`));
+    window.guardarServicio = () => {
+        const n = document.getElementById('sNom').value;
+        const p = document.getElementById('sPre').value;
+        const c = document.getElementById('sCat').value;
+        if(n && p && c) {
+            push(ref(db, 'catalogo'), {nombre: n, precio: p, categoria: c});
+            document.getElementById('sNom').value = "";
+            document.getElementById('sPre').value = "";
+        } else {
+            alert("Completa todos los campos");
+        }
+    };
+
+    window.borrarCat = id => confirm("¿Eliminar servicio?") && remove(ref(db, `catalogo/${id}`));
     
     cargarAgenda();
 </script>
