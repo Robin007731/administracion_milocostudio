@@ -10,41 +10,28 @@
             --gold: #ffffff; --card: rgba(74, 74, 74, 0.9); --text: #ffffff;
             --input-bg: rgba(43, 43, 43, 0.8); --overlay: rgba(0,0,0,0.85);
         }
-
-        body { margin: 0; background: #000; color: var(--text); font-family: 'Montserrat', sans-serif; min-height: 100vh; overflow-x: hidden; padding: 20px; box-sizing: border-box; }
-        
-        /* Fondo idéntico al de reservas */
+        body { margin: 0; background: #000; color: var(--text); font-family: 'Montserrat', sans-serif; min-height: 100vh; padding: 20px; box-sizing: border-box; }
         .bg-fixed { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url('199797.jpg'); background-size: cover; background-position: center; z-index: -1; }
-
         .container { max-width: 600px; margin: 40px auto; position: relative; z-index: 10; }
-        
-        h2 { text-align: center; letter-spacing: 5px; font-weight: 300; margin-bottom: 30px; text-shadow: 2px 2px 10px rgba(0,0,0,0.5); }
-
-        .card { background: var(--card); padding: 20px; border-radius: 12px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        
-        .btn-del { position: absolute; top: 10px; right: 10px; background: #ff4d4d; border: none; color: white; padding: 5px 12px; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        
+        h2 { text-align: center; letter-spacing: 5px; font-weight: 300; margin-bottom: 30px; }
+        .card { background: var(--card); padding: 20px; border-radius: 12px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); position: relative; }
+        .btn-del { position: absolute; top: 10px; right: 10px; background: #ff4d4d; border: none; color: white; padding: 5px 12px; border-radius: 5px; cursor: pointer; }
+        .btn-edit { position: absolute; top: 10px; right: 50px; background: #4da3ff; border: none; color: white; padding: 5px 12px; border-radius: 5px; cursor: pointer; }
         .tabs { display: flex; gap: 10px; margin-bottom: 25px; }
         .tab { flex: 1; padding: 12px; text-align: center; background: rgba(255,255,255,0.1); cursor: pointer; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); transition: 0.3s; letter-spacing: 2px; font-size: 0.8rem; }
         .tab.active { background: white; color: black; font-weight: bold; }
-
         input, select { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: var(--input-bg); color: white; box-sizing: border-box; }
-        
-        .btn-wa { display: block; background: #25d366; color: white; text-decoration: none; text-align: center; padding: 12px; border-radius: 8px; margin-top: 10px; font-weight: bold; letter-spacing: 1px; }
-        
+        .btn-wa { display: block; background: #25d366; color: white; text-decoration: none; text-align: center; padding: 12px; border-radius: 8px; margin-top: 10px; font-weight: bold; }
         .flex-row { display: flex; gap: 8px; align-items: center; }
-        .btn-add-cat { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 12px; border-radius: 8px; cursor: pointer; white-space: nowrap; font-size: 0.8rem; }
-
+        .btn-add-cat { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 12px; border-radius: 8px; cursor: pointer; white-space: nowrap; }
         .btn-main { width: 100%; padding: 15px; background: white; color: black; font-weight: bold; border: none; border-radius: 8px; margin-top: 10px; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; }
+        .section-group { margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 20px; }
     </style>
 </head>
 <body>
-
 <div class="bg-fixed"></div>
-
 <div class="container">
     <h2>ADMIN MILOCOSTUDIO</h2>
-    
     <div class="tabs">
         <div class="tab active" onclick="switchTab('agenda')">AGENDA</div>
         <div class="tab" onclick="switchTab('catalogo')">CATÁLOGO</div>
@@ -57,21 +44,16 @@
 
     <div id="panelCatalogo" style="display:none">
         <div class="card">
-            <h4 style="margin:0 0 10px 0; letter-spacing: 2px; font-weight: 400;">NUEVO SERVICIO</h4>
+            <h4 id="formTitle" style="margin:0 0 10px 0; letter-spacing: 2px; font-weight: 400;">NUEVO SERVICIO</h4>
+            <input id="sId" type="hidden">
             <input id="sNom" placeholder="Nombre del Servicio">
             <input id="sPre" type="number" placeholder="Precio ($)">
-            
             <div class="flex-row">
-                <select id="sCat">
-                    <option value="CORTES">CORTES</option>
-                    <option value="BARBA">BARBA</option>
-                    <option value="DETALLES">DETALLES</option>
-                    <option value="COLORES">COLORES</option>
-                </select>
-                <button class="btn-add-cat" onclick="nuevaCategoria()">+ SECCIÓN</button>
+                <select id="sCat"></select>
+                <button class="btn-add-cat" onclick="gestionarSecciones()">⚙️ SECCIONES</button>
             </div>
-
-            <button onclick="guardarServicio()" class="btn-main">Añadir al Menú</button>
+            <button id="btnGuardar" onclick="guardarServicio()" class="btn-main">Añadir al Menú</button>
+            <button id="btnCancelar" onclick="limpiarForm()" class="btn-main" style="background:#666; color:white; display:none;">Cancelar Edición</button>
         </div>
         <div id="listaCat"></div>
     </div>
@@ -79,7 +61,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, onValue, query, orderByChild, equalTo, remove, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    import { getDatabase, ref, onValue, query, orderByChild, equalTo, remove, push, set, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyCb47oi5HqrgrqIc1jwukF-igINVSOm5Pk",
@@ -91,10 +73,14 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     let currentUnsub = null;
+    let categoriasGlobal = ["CORTES", "BARBA", "DETALLES", "COLORES"];
 
-    const inputF = document.getElementById('filtroFecha');
-    inputF.value = new Date().toISOString().split('T')[0];
-    inputF.onchange = () => cargarAgenda();
+    // Sincronizar Secciones
+    onValue(ref(db, 'secciones'), snap => {
+        if(snap.exists()) categoriasGlobal = Object.values(snap.val());
+        const sel = document.getElementById('sCat');
+        sel.innerHTML = categoriasGlobal.map(c => `<option value="${c}">${c}</option>`).join('');
+    });
 
     window.switchTab = t => {
         document.getElementById('panelAgenda').style.display = t === 'agenda' ? 'block' : 'none';
@@ -103,69 +89,103 @@
         if(t==='catalogo') cargarCat(); else cargarAgenda();
     };
 
+    // --- AGENDA ---
+    const inputF = document.getElementById('filtroFecha');
+    inputF.value = new Date().toISOString().split('T')[0];
+    inputF.onchange = () => cargarAgenda();
+
     function cargarAgenda() {
         if(currentUnsub) currentUnsub();
         const q = query(ref(db, 'reservas'), orderByChild('fecha'), equalTo(inputF.value));
         currentUnsub = onValue(q, snap => {
             const cont = document.getElementById('listaAgenda');
-            cont.innerHTML = "";
-            if(!snap.exists()) return cont.innerHTML = "<p style='text-align:center; opacity:0.5;'>Sin turnos para esta fecha.</p>";
-            Object.entries(snap.val()).sort((a,b) => a[1].hora.localeCompare(b[1].hora)).forEach(([id, r]) => {
-                const d = document.createElement('div'); d.className = 'card';
-                d.style.borderLeft = "5px solid #25d366";
-                d.innerHTML = `<button class="btn-del" onclick="borrar('${id}')">X</button>
-                    <b style="font-size:1.1rem;">${r.hora} hs</b> - ${r.nombre}<br>
-                    <small style="opacity:0.8">${r.servicio}</small>
-                    <a href="https://wa.me/${r.tel.replace(/\D/g,'')}" class="btn-wa" target="_blank">HABLAR POR WHATSAPP</a>`;
-                cont.appendChild(d);
-            });
+            cont.innerHTML = snap.exists() ? "" : "<p style='text-align:center; opacity:0.5;'>Sin turnos.</p>";
+            if(snap.exists()) {
+                Object.entries(snap.val()).sort((a,b) => a[1].hora.localeCompare(b[1].hora)).forEach(([id, r]) => {
+                    const d = document.createElement('div'); d.className = 'card'; d.style.borderLeft = "5px solid #25d366";
+                    d.innerHTML = `<button class="btn-del" onclick="borrar('${id}')">X</button>
+                        <b>${r.hora} hs</b> - ${r.nombre}<br><small>${r.servicio}</small>
+                        <a href="https://wa.me/${r.tel.replace(/\D/g,'')}" class="btn-wa" target="_blank">WHATSAPP</a>`;
+                    cont.appendChild(d);
+                });
+            }
         });
     }
+    window.borrar = id => confirm("¿Eliminar reserva?") && remove(ref(db, `reservas/${id}`));
 
-    window.borrar = id => confirm("¿Deseas eliminar esta reserva?") && remove(ref(db, `reservas/${id}`));
-
+    // --- CATÁLOGO (SERVICIOS) ---
     function cargarCat() {
         onValue(ref(db, 'catalogo'), snap => {
             const cont = document.getElementById('listaCat'); cont.innerHTML = "";
             if(snap.exists()) {
                 Object.entries(snap.val()).forEach(([id, s]) => {
                     const d = document.createElement('div'); d.className = 'card';
-                    d.innerHTML = `<b>${s.nombre}</b> - $${s.precio} <br> 
-                                   <small style="color: #ccc; text-transform: uppercase; font-size:0.7rem; letter-spacing:1px;">Sección: ${s.categoria || 'Sin categoría'}</small>
-                                   <button class="btn-del" onclick="borrarCat('${id}')">X</button>`;
+                    d.innerHTML = `<b>${s.nombre}</b> - $${s.precio}<br><small style="opacity:0.6">${s.categoria}</small>
+                        <button class="btn-edit" onclick="editarServicio('${id}', '${s.nombre}', '${s.precio}', '${s.categoria}')">✎</button>
+                        <button class="btn-del" onclick="borrarCat('${id}')">X</button>`;
                     cont.appendChild(d);
                 });
             }
         });
     }
 
-    window.nuevaCategoria = () => {
-        const nombre = prompt("Nombre de la nueva sección:");
-        if (nombre) {
-            const sel = document.getElementById('sCat');
-            const opt = document.createElement('option');
-            opt.value = nombre.toUpperCase();
-            opt.innerText = nombre.toUpperCase();
-            sel.appendChild(opt);
-            sel.value = opt.value;
-        }
-    };
-
     window.guardarServicio = () => {
-        const n = document.getElementById('sNom').value;
-        const p = document.getElementById('sPre').value;
-        const c = document.getElementById('sCat').value;
-        if(n && p && c) {
-            push(ref(db, 'catalogo'), {nombre: n, precio: p, categoria: c});
-            document.getElementById('sNom').value = "";
-            document.getElementById('sPre').value = "";
-        } else {
-            alert("Por favor, completa nombre y precio.");
+        const id = document.getElementById('sId').value, n = document.getElementById('sNom').value, 
+              p = document.getElementById('sPre').value, c = document.getElementById('sCat').value;
+        if(!n || !p) return alert("Completa nombre y precio");
+        const data = { nombre: n, precio: p, categoria: c };
+        id ? update(ref(db, `catalogo/${id}`), data) : push(ref(db, 'catalogo'), data);
+        limpiarForm();
+    };
+
+    window.editarServicio = (id, n, p, c) => {
+        document.getElementById('formTitle').innerText = "EDITAR SERVICIO";
+        document.getElementById('sId').value = id;
+        document.getElementById('sNom').value = n;
+        document.getElementById('sPre').value = p;
+        document.getElementById('sCat').value = c;
+        document.getElementById('btnGuardar').innerText = "Guardar Cambios";
+        document.getElementById('btnCancelar').style.display = "block";
+    };
+
+    window.limpiarForm = () => {
+        document.getElementById('formTitle').innerText = "NUEVO SERVICIO";
+        document.getElementById('sId').value = "";
+        document.getElementById('sNom').value = "";
+        document.getElementById('sPre').value = "";
+        document.getElementById('btnGuardar').innerText = "Añadir al Menú";
+        document.getElementById('btnCancelar').style.display = "none";
+    };
+
+    window.borrarCat = id => confirm("¿Eliminar servicio?") && remove(ref(db, `catalogo/${id}`));
+
+    // --- SECCIONES ---
+    window.gestionarSecciones = () => {
+        const accion = prompt("Gestión de Secciones:\n1. Nueva sección\n2. Editar nombre\n3. Eliminar sección\n(Escribe el número)");
+        if(accion === "1") {
+            const n = prompt("Nombre de la nueva sección:");
+            if(n) {
+                const nuevas = [...categoriasGlobal, n.toUpperCase()];
+                set(ref(db, 'secciones'), nuevas);
+            }
+        } else if(accion === "2") {
+            const vieja = prompt("Nombre EXACTO de la sección a editar:\n" + categoriasGlobal.join(", "));
+            if(categoriasGlobal.includes(vieja)) {
+                const nueva = prompt("Nuevo nombre para " + vieja + ":");
+                if(nueva) {
+                    const nuevas = categoriasGlobal.map(c => c === vieja ? nueva.toUpperCase() : c);
+                    set(ref(db, 'secciones'), nuevas);
+                }
+            }
+        } else if(accion === "3") {
+            const borrar = prompt("Nombre EXACTO a eliminar:\n" + categoriasGlobal.join(", "));
+            if(categoriasGlobal.includes(borrar) && confirm("¿Borrar sección? Los servicios de esta sección quedarán huérfos.")) {
+                const nuevas = categoriasGlobal.filter(c => c !== borrar);
+                set(ref(db, 'secciones'), nuevas);
+            }
         }
     };
 
-    window.borrarCat = id => confirm("¿Eliminar este servicio del catálogo?") && remove(ref(db, `catalogo/${id}`));
-    
     cargarAgenda();
 </script>
 </body>
