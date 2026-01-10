@@ -8,24 +8,32 @@
     <style>
         :root { 
             --gold: #ffffff; --card: rgba(74, 74, 74, 0.9); --text: #ffffff;
-            --input-bg: rgba(43, 43, 43, 0.8); --overlay: rgba(0,0,0,0.85);
+            --input-bg: rgba(43, 43, 43, 0.8); --overlay: rgba(0,0,0,0.9);
         }
         body { margin: 0; background: #000; color: var(--text); font-family: 'Montserrat', sans-serif; min-height: 100vh; padding: 20px; box-sizing: border-box; }
         .bg-fixed { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url('199797.jpg'); background-size: cover; background-position: center; z-index: -1; }
         .container { max-width: 600px; margin: 40px auto; position: relative; z-index: 10; }
         h2 { text-align: center; letter-spacing: 5px; font-weight: 300; margin-bottom: 30px; }
+        
+        /* Cards */
         .card { background: var(--card); padding: 20px; border-radius: 12px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); position: relative; }
-        .btn-del { position: absolute; top: 10px; right: 10px; background: #ff4d4d; border: none; color: white; padding: 5px 12px; border-radius: 5px; cursor: pointer; }
-        .btn-edit { position: absolute; top: 10px; right: 50px; background: #4da3ff; border: none; color: white; padding: 5px 12px; border-radius: 5px; cursor: pointer; }
         .tabs { display: flex; gap: 10px; margin-bottom: 25px; }
         .tab { flex: 1; padding: 12px; text-align: center; background: rgba(255,255,255,0.1); cursor: pointer; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); transition: 0.3s; letter-spacing: 2px; font-size: 0.8rem; }
         .tab.active { background: white; color: black; font-weight: bold; }
+        
+        /* Form elements */
         input, select { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: var(--input-bg); color: white; box-sizing: border-box; }
+        .btn-del { background: #ff4d4d; border: none; color: white; padding: 5px 12px; border-radius: 5px; cursor: pointer; }
+        .btn-edit { background: #4da3ff; border: none; color: white; padding: 5px 12px; border-radius: 5px; cursor: pointer; }
+        .btn-main { width: 100%; padding: 15px; background: white; color: black; font-weight: bold; border: none; border-radius: 8px; margin-top: 10px; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; }
+        
+        /* Modal Secciones */
+        #modalSecciones { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--overlay); display: none; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(10px); }
+        .modal-box { background: #222; padding: 30px; border-radius: 15px; width: 90%; max-width: 450px; border: 1px solid rgba(255,255,255,0.2); max-height: 80vh; overflow-y: auto; }
+        .sec-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #444; margin-bottom: 5px; }
+        
         .btn-wa { display: block; background: #25d366; color: white; text-decoration: none; text-align: center; padding: 12px; border-radius: 8px; margin-top: 10px; font-weight: bold; }
         .flex-row { display: flex; gap: 8px; align-items: center; }
-        .btn-add-cat { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 12px; border-radius: 8px; cursor: pointer; white-space: nowrap; }
-        .btn-main { width: 100%; padding: 15px; background: white; color: black; font-weight: bold; border: none; border-radius: 8px; margin-top: 10px; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; }
-        .section-group { margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 20px; }
     </style>
 </head>
 <body>
@@ -50,12 +58,27 @@
             <input id="sPre" type="number" placeholder="Precio ($)">
             <div class="flex-row">
                 <select id="sCat"></select>
-                <button class="btn-add-cat" onclick="gestionarSecciones()">⚙️ SECCIONES</button>
+                <button onclick="abrirModalSecciones()" style="padding:10px; background:rgba(255,255,255,0.1); color:white; border:1px solid #444; border-radius:8px; cursor:pointer;">⚙️</button>
             </div>
             <button id="btnGuardar" onclick="guardarServicio()" class="btn-main">Añadir al Menú</button>
-            <button id="btnCancelar" onclick="limpiarForm()" class="btn-main" style="background:#666; color:white; display:none;">Cancelar Edición</button>
+            <button id="btnCancelar" onclick="limpiarForm()" class="btn-main" style="background:#444; color:white; display:none; margin-top:5px;">Cancelar Edición</button>
         </div>
         <div id="listaCat"></div>
+    </div>
+</div>
+
+<div id="modalSecciones">
+    <div class="modal-box">
+        <h3 style="margin-top:0; letter-spacing: 2px;">GESTIONAR SECCIONES</h3>
+        
+        <div style="margin-bottom: 20px;">
+            <input id="nuevaSecInput" placeholder="Nombre de nueva sección">
+            <button onclick="agregarNuevaSec()" class="btn-main" style="font-size: 0.7rem; padding: 10px;">+ AGREGAR SECCIÓN</button>
+        </div>
+
+        <div id="listaSeccionesEditor"></div>
+        
+        <button onclick="cerrarModalSecciones()" class="btn-main" style="background:#444; color:white; margin-top: 20px;">CERRAR</button>
     </div>
 </div>
 
@@ -73,15 +96,62 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     let currentUnsub = null;
-    let categoriasGlobal = ["CORTES", "BARBA", "DETALLES", "COLORES"];
+    let categoriasGlobal = [];
 
-    // Sincronizar Secciones
+    // --- SINCRONIZACIÓN DE SECCIONES ---
     onValue(ref(db, 'secciones'), snap => {
-        if(snap.exists()) categoriasGlobal = Object.values(snap.val());
-        const sel = document.getElementById('sCat');
-        sel.innerHTML = categoriasGlobal.map(c => `<option value="${c}">${c}</option>`).join('');
+        categoriasGlobal = snap.exists() ? Object.values(snap.val()) : ["CORTES", "BARBA"];
+        actualizarUISecciones();
     });
 
+    function actualizarUISecciones() {
+        // Actualizar Select del formulario
+        const sel = document.getElementById('sCat');
+        sel.innerHTML = categoriasGlobal.map(c => `<option value="${c}">${c}</option>`).join('');
+
+        // Actualizar lista dentro del Modal
+        const listaEditor = document.getElementById('listaSeccionesEditor');
+        listaEditor.innerHTML = categoriasGlobal.map((c, index) => `
+            <div class="sec-item">
+                <span>${c}</span>
+                <div>
+                    <button class="btn-edit" onclick="renombrarSec(${index})">✎</button>
+                    <button class="btn-del" onclick="eliminarSec(${index})">X</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // --- ACCIONES SECCIONES ---
+    window.abrirModalSecciones = () => document.getElementById('modalSecciones').style.display = 'flex';
+    window.cerrarModalSecciones = () => document.getElementById('modalSecciones').style.display = 'none';
+
+    window.agregarNuevaSec = () => {
+        const input = document.getElementById('nuevaSecInput');
+        if(input.value) {
+            const nuevas = [...categoriasGlobal, input.value.toUpperCase()];
+            set(ref(db, 'secciones'), nuevas);
+            input.value = "";
+        }
+    };
+
+    window.eliminarSec = (index) => {
+        if(confirm("¿Eliminar esta sección?")) {
+            const nuevas = categoriasGlobal.filter((_, i) => i !== index);
+            set(ref(db, 'secciones'), nuevas);
+        }
+    };
+
+    window.renombrarSec = (index) => {
+        const nuevoNombre = prompt("Nuevo nombre para la sección:", categoriasGlobal[index]);
+        if(nuevoNombre) {
+            const nuevas = [...categoriasGlobal];
+            nuevas[index] = nuevoNombre.toUpperCase();
+            set(ref(db, 'secciones'), nuevas);
+        }
+    };
+
+    // --- PANELES ---
     window.switchTab = t => {
         document.getElementById('panelAgenda').style.display = t === 'agenda' ? 'block' : 'none';
         document.getElementById('panelCatalogo').style.display = t === 'catalogo' ? 'block' : 'none';
@@ -103,7 +173,7 @@
             if(snap.exists()) {
                 Object.entries(snap.val()).sort((a,b) => a[1].hora.localeCompare(b[1].hora)).forEach(([id, r]) => {
                     const d = document.createElement('div'); d.className = 'card'; d.style.borderLeft = "5px solid #25d366";
-                    d.innerHTML = `<button class="btn-del" onclick="borrar('${id}')">X</button>
+                    d.innerHTML = `<button style="position:absolute; top:10px; right:10px;" class="btn-del" onclick="borrar('${id}')">X</button>
                         <b>${r.hora} hs</b> - ${r.nombre}<br><small>${r.servicio}</small>
                         <a href="https://wa.me/${r.tel.replace(/\D/g,'')}" class="btn-wa" target="_blank">WHATSAPP</a>`;
                     cont.appendChild(d);
@@ -113,16 +183,19 @@
     }
     window.borrar = id => confirm("¿Eliminar reserva?") && remove(ref(db, `reservas/${id}`));
 
-    // --- CATÁLOGO (SERVICIOS) ---
+    // --- CATÁLOGO ---
     function cargarCat() {
         onValue(ref(db, 'catalogo'), snap => {
             const cont = document.getElementById('listaCat'); cont.innerHTML = "";
             if(snap.exists()) {
                 Object.entries(snap.val()).forEach(([id, s]) => {
                     const d = document.createElement('div'); d.className = 'card';
-                    d.innerHTML = `<b>${s.nombre}</b> - $${s.precio}<br><small style="opacity:0.6">${s.categoria}</small>
-                        <button class="btn-edit" onclick="editarServicio('${id}', '${s.nombre}', '${s.precio}', '${s.categoria}')">✎</button>
-                        <button class="btn-del" onclick="borrarCat('${id}')">X</button>`;
+                    d.innerHTML = `<b>${s.nombre}</b> - $${s.precio}<br>
+                        <small style="opacity:0.6; text-transform:uppercase;">${s.categoria}</small>
+                        <div style="position:absolute; top:10px; right:10px; display:flex; gap:5px;">
+                            <button class="btn-edit" onclick="editarServicio('${id}', '${s.nombre}', '${s.precio}', '${s.categoria}')">✎</button>
+                            <button class="btn-del" onclick="borrarCat('${id}')">X</button>
+                        </div>`;
                     cont.appendChild(d);
                 });
             }
@@ -146,6 +219,7 @@
         document.getElementById('sCat').value = c;
         document.getElementById('btnGuardar').innerText = "Guardar Cambios";
         document.getElementById('btnCancelar').style.display = "block";
+        window.scrollTo({top: 0, behavior: 'smooth'});
     };
 
     window.limpiarForm = () => {
@@ -158,33 +232,6 @@
     };
 
     window.borrarCat = id => confirm("¿Eliminar servicio?") && remove(ref(db, `catalogo/${id}`));
-
-    // --- SECCIONES ---
-    window.gestionarSecciones = () => {
-        const accion = prompt("Gestión de Secciones:\n1. Nueva sección\n2. Editar nombre\n3. Eliminar sección\n(Escribe el número)");
-        if(accion === "1") {
-            const n = prompt("Nombre de la nueva sección:");
-            if(n) {
-                const nuevas = [...categoriasGlobal, n.toUpperCase()];
-                set(ref(db, 'secciones'), nuevas);
-            }
-        } else if(accion === "2") {
-            const vieja = prompt("Nombre EXACTO de la sección a editar:\n" + categoriasGlobal.join(", "));
-            if(categoriasGlobal.includes(vieja)) {
-                const nueva = prompt("Nuevo nombre para " + vieja + ":");
-                if(nueva) {
-                    const nuevas = categoriasGlobal.map(c => c === vieja ? nueva.toUpperCase() : c);
-                    set(ref(db, 'secciones'), nuevas);
-                }
-            }
-        } else if(accion === "3") {
-            const borrar = prompt("Nombre EXACTO a eliminar:\n" + categoriasGlobal.join(", "));
-            if(categoriasGlobal.includes(borrar) && confirm("¿Borrar sección? Los servicios de esta sección quedarán huérfos.")) {
-                const nuevas = categoriasGlobal.filter(c => c !== borrar);
-                set(ref(db, 'secciones'), nuevas);
-            }
-        }
-    };
 
     cargarAgenda();
 </script>
